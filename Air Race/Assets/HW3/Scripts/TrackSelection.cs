@@ -5,21 +5,27 @@ using UnityEngine.UI;
 
 public class TrackSelection : MonoBehaviour {
 	private GameObject gm;
-	private Text text;
+	private int trackNum = 0;
 
 	// Use this for initialization
-	void Start () {
-		text = GetComponentInChildren<Text>();
+	void Awake () {
 		gm = GameObject.FindGameObjectWithTag("GM");
-	}
-	
-	// Update is called once per frame
-	void Update () {
-		
 	}
 
 	public void setName(string filename) {
-		text.text = filename;
+		GetComponentInChildren<Text>().text = filename;
+	}
+
+	public void setNumber(int num) {
+		trackNum = num;
+	}
+
+	public void setTrack() {
+		if (trackNum == 0)
+			return;
+
+		gm.GetComponent<Parser>().beginParsing(trackNum);
+		transform.parent.gameObject.SetActive(false);
 	}
 
 }
