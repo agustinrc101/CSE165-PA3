@@ -40,12 +40,27 @@ public class TrackSelection : MonoBehaviour {
 		transform.parent.gameObject.SetActive(false);
 	}
 
-	public void increaseFill() {
+	public bool increaseFill(Color color) {
+		_fillImage.color = color;
 		_fillImage.fillAmount += (_fillSpeed * Time.deltaTime);
+
+		if (_fillImage.fillAmount >= 1.0f) {
+			beginGame();
+			return true;
+		}
+
+		return false;
 	}
 
 	public void resetFill(){
 		_fillImage.fillAmount = 0.0f;
+	}
+
+	private void beginGame() {
+		if (gm == null)
+			gm = GameObject.FindGameObjectWithTag("GM");
+
+		gm.GetComponent<Parser>().beginParsing(trackNum);
 	}
 
 }

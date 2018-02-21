@@ -5,7 +5,6 @@ using System.IO;
 
 public class Parser : MonoBehaviour {
 	[SerializeField] private GameObject _checkpoint;
-	[SerializeField] private bool _showTestCheckpoints = false;
 	[SerializeField] private Transform _trackSelectionCanvas;
 	[SerializeField] private GameObject _trackSelectionBox;
 
@@ -15,22 +14,11 @@ public class Parser : MonoBehaviour {
 	private List<GameObject> checkpoints;
 	private int currentCheckpoint = 0;
 
-	public bool test1 = false;//TODO delete
-	private bool test2 = true;//TODO delete
-
-	void Update() {
-		if (test1 && test2) {
-			beginParsing(1);
-			test2 = false;
-		}
-	}
-
 	void OnDrawGizmos() {
 		DirectoryInfo dir = new DirectoryInfo(Application.dataPath + "/HW3/Tracks/");
 		FileInfo[] info = dir.GetFiles();
 		totalFiles = info.Length / 2;
 	}
-
 
 	// Use this for initialization
 	void Start () {
@@ -110,8 +98,18 @@ public class Parser : MonoBehaviour {
 				cPosition.z = float.Parse(s1) * inchToMeters;
 
 				GameObject curCheckpoint = Instantiate(_checkpoint, cPosition, Quaternion.identity, this.transform);
-				curCheckpoint.SetActive(_showTestCheckpoints);
+				checkpoints.Add(curCheckpoint);
+				curCheckpoint.SetActive(false);
 			}
+
+			begin();
+
+			if (checkpoints.Count > 0) {
+				GameObject.FindGameObjectWithTag("Player").transform.position = checkpoints[0].transform.position;
+				if (checkpoints.Count > 1)
+					GameObject.FindGameObjectWithTag("Player").transform.LookAt(checkpoints[1].transform, Vector3.up);
+			}
+
 
 		}
 		else {
@@ -120,19 +118,31 @@ public class Parser : MonoBehaviour {
 	}
 
 	public void begin() {
-		currentCheckpoint = 0;
-		checkpoints[currentCheckpoint].SetActive(true);
+		if (checkpoints.Count < 2) {
+			finishRace();
+			return;
+		}
 
-		if (checkpoints.Count > 1)
+		currentCheckpoint = 1;
+		checkpoints[currentCheckpoint].SetActive(true);
+		checkpoints[currentCheckpoint].GetComponent<CheckpointBehavior>().setCollider(true);
+
+		if (checkpoints.Count > 1) {
 			checkpoints[currentCheckpoint + 1].SetActive(true);
+			checkpoints[currentCheckpoint + 1].GetComponent<CheckpointBehavior>().setCollider(false);
+		}
 	}
 
 	public void nextWaypoint() {
 		checkpoints[currentCheckpoint].SetActive(false);
 		currentCheckpoint++;
 
-		if (checkpoints.Count > (currentCheckpoint + 1))
+		checkpoints[currentCheckpoint].GetComponent<CheckpointBehavior>().setCollider(true);
+
+		if (checkpoints.Count > (currentCheckpoint + 1)) {
 			checkpoints[currentCheckpoint + 1].SetActive(true);
+			checkpoints[currentCheckpoint + 1].GetComponent<CheckpointBehavior>().setCollider(false);
+		}
 
 		if (checkpoints.Count <= currentCheckpoint)
 			finishRace();

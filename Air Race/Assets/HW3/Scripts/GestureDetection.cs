@@ -27,9 +27,13 @@ namespace Leap.Unity {
 
 		[SerializeField] private RigidHand _leftHand;
 		[SerializeField] private RigidHand _rightHand;
+		[SerializeField] private CapsuleHand _leftCHand;
+		[SerializeField] private CapsuleHand _rightCHand;
 
 		private HandGestureInfo handL;
 		private HandGestureInfo handR;
+
+		private Countdown countdown;
 
 		private bool isSelectingTrack = true;
 		private bool isCountdown = false;
@@ -38,6 +42,8 @@ namespace Leap.Unity {
 		void Start() {
 			handL = new HandGestureInfo();
 			handR = new HandGestureInfo();
+
+			countdown = GetComponent<Countdown>();
 		}
 
 		void FixedUpdate() {
@@ -92,12 +98,15 @@ namespace Leap.Unity {
 			}
 
 			if (isCountdown) {
-				Debug.Log("COUNTDOWN");
-				if (hand.hand.IsLeft) {
-					//countdownScript.setLeftThumbsUp(hand.isThumbsUp);
-				}
-				else {
-					//countdownScript.setRightThumbsUp(hand.isThumbsUp);
+				if (hand.hand.IsLeft)
+					countdown.setLeftThumbsUp(hand.isThumbsUp);
+				else 
+					countdown.setRightThumbsUp(hand.isThumbsUp);
+
+				if (countdown.getIsReady()) {
+					isFlying = true;
+					isCountdown = false;
+					countdown.startCountdown();
 				}
 			}
 
@@ -130,18 +139,34 @@ namespace Leap.Unity {
 
 			if (hand.hand.IsLeft) {
 				dir = _leftHand.transform.GetChild((int)HandJointObj.PALM).transform.GetChild(0).position;
-				
-				//sphereColor = 
+				if (_leftCHand.getSphereMat() == null)
+					return true;
+
+				sphereColor = _leftCHand.getSphereMat().color;
 			}
 			else {
-				dir = dir = _rightHand.transform.GetChild((int)HandJointObj.PALM).transform.GetChild(0).position;
-				//sphereColor = 
+				dir = _rightHand.transform.GetChild((int)HandJointObj.PALM).transform.GetChild(0).position;
+				if (_rightCHand.getSphereMat() == null)
+					return true;
+
+				sphereColor = _rightCHand.getSphereMat().color;
 			}
 
 			dir = dir - palmPos;
 			dir = dir.normalized;
 
-			return !hr.shootRaycast(palmPos, dir, hand.isPalmOpen);
+			//returns true if selection is complete (reversed here)
+			bool enableRaycaster = hr.shootRaycast(palmPos, dir, hand.isPalmOpen, sphereColor);
+
+			//Diabled the raycaster if the selection is complete
+			if (enableRaycaster) {
+				hr = _leftHand.GetComponent<HandRaycaster>();
+				hr.enabled = false;
+				hr = _leftHand.GetComponent<HandRaycaster>();
+				hr.enabled = false;
+			}
+
+			return !enableRaycaster;
 		}
 
 

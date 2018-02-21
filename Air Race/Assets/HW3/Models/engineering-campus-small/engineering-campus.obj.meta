@@ -1,6 +1,6 @@
 fileFormatVersion: 2
 guid: 1ab6929a7080380409748c86414fb425
-timeCreated: 1518918709
+timeCreated: 1519186637
 licenseType: Free
 ModelImporter:
   serializedVersion: 22
@@ -660,7 +660,47 @@ ModelImporter:
     4300252: Mesh98_Model
     4300254: Mesh99_Model
     4300256: Mesh9_Group10_Group1_Model
-  externalObjects: {}
+  externalObjects:
+  - first:
+      type: UnityEngine:Material
+      assembly: UnityEngine.CoreModule
+      name: Cladding_Stucco_White
+    second: {fileID: 2100000, guid: 804677a6b401d8c449ce6b3070346c20, type: 2}
+  - first:
+      type: UnityEngine:Material
+      assembly: UnityEngine.CoreModule
+      name: Color_000
+    second: {fileID: 2100000, guid: 3d59a3ea188289c4098fc9f8b4928f23, type: 2}
+  - first:
+      type: UnityEngine:Material
+      assembly: UnityEngine.CoreModule
+      name: Color_D09
+    second: {fileID: 2100000, guid: f71a302f80727904eb790d027cd3b6c0, type: 2}
+  - first:
+      type: UnityEngine:Material
+      assembly: UnityEngine.CoreModule
+      name: Concrete_Block_8x8_Gray
+    second: {fileID: 2100000, guid: 4a7211374db346141847c8a306c7a031, type: 2}
+  - first:
+      type: UnityEngine:Material
+      assembly: UnityEngine.CoreModule
+      name: FrontColor
+    second: {fileID: 2100000, guid: cfe52d1b2a12aa94c822f870174390b0, type: 2}
+  - first:
+      type: UnityEngine:Material
+      assembly: UnityEngine.CoreModule
+      name: UCSD_ORTHO_2
+    second: {fileID: 2100000, guid: de1c5392853a5b345887eb0bb42527ab, type: 2}
+  - first:
+      type: UnityEngine:Material
+      assembly: UnityEngine.CoreModule
+      name: _2
+    second: {fileID: 2100000, guid: 45bbd0896fc849a4880abd91248f6da1, type: 2}
+  - first:
+      type: UnityEngine:Material
+      assembly: UnityEngine.CoreModule
+      name: top_of_model
+    second: {fileID: 2100000, guid: b9eca64581642e945b5e596bbbeead14, type: 2}
   materials:
     importMaterials: 1
     materialName: 0

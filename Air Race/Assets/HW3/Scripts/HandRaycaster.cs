@@ -15,14 +15,17 @@ public class HandRaycaster : MonoBehaviour {
 	}
 
 	//Return true if the selection is complete
-	public bool shootRaycast(Vector3 position, Vector3 direction, bool shootRay) {
+	public bool shootRaycast(Vector3 position, Vector3 direction, bool shootRay, Color color) {
+		bool isDone = false;
+
 		lineRenderer = GetComponent<LineRenderer>();
 
 		//If the ray should be not be shot
 		if (!shootRay) {
+			lineRenderer.material.color = color;
 			lineRenderer.SetPosition(0, position);
 			lineRenderer.SetPosition(1, position);
-			return false;
+			return isDone;
 		}
 
 		//Shoot ray
@@ -46,7 +49,7 @@ public class HandRaycaster : MonoBehaviour {
 					lastHit = hitInfo.collider.gameObject;
 				}
 
-				hitInfo.collider.gameObject.GetComponent<TrackSelection>().increaseFill();
+				isDone = hitInfo.collider.gameObject.GetComponent<TrackSelection>().increaseFill(color);
 			}
 		}
 		else {
@@ -56,9 +59,10 @@ public class HandRaycaster : MonoBehaviour {
 			rayEndPosition = position + (100 * direction);
 		}
 
+		lineRenderer.material.color = color;
 		lineRenderer.SetPosition(0, position);
 		lineRenderer.SetPosition(1, rayEndPosition);
 
-		return false;
+		return isDone;
 	}
 }
