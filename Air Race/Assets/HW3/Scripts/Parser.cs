@@ -7,6 +7,8 @@ public class Parser : MonoBehaviour {
 	[SerializeField] private GameObject _checkpoint;
 	[SerializeField] private Transform _trackSelectionCanvas;
 	[SerializeField] private GameObject _trackSelectionBox;
+	[SerializeField] private bool _spatialAudio = false;
+	[SerializeField] private AudioSource _spAudio;
 
 	private float inchToMeters = 0.0254f;
 	public int totalFiles = 0;
@@ -45,6 +47,8 @@ public class Parser : MonoBehaviour {
 			}
 				
 		}
+
+		GameObject.FindGameObjectWithTag("ArrowPointer").SetActive(!_spatialAudio);
 	}
 
 	//When a textbox is selected
@@ -127,12 +131,19 @@ public class Parser : MonoBehaviour {
 		checkpoints[currentCheckpoint].SetActive(true);
 		checkpoints[currentCheckpoint].GetComponent<CheckpointBehavior>().setCollider(true);
 		checkpoints[currentCheckpoint].GetComponent<CheckpointBehavior>().setIsCurrent(true);
-		GameObject.FindGameObjectWithTag("ArrowPointer").GetComponent<ArrowDirection>().setArrowLookAtPosition(checkpoints[currentCheckpoint].transform.position);
+
+		if (_spatialAudio) {
+			_spAudio.transform.position = checkpoints[currentCheckpoint].transform.position;
+			_spAudio.Play();
+		}
+		else
+			GameObject.FindGameObjectWithTag("ArrowPointer").GetComponent<ArrowDirection>().setArrowLookAtPosition(checkpoints[currentCheckpoint].transform.position);
 
 		if (checkpoints.Count > 1) {
 			checkpoints[currentCheckpoint + 1].SetActive(true);
 			checkpoints[currentCheckpoint + 1].GetComponent<CheckpointBehavior>().setCollider(false);
-			checkpoints[currentCheckpoint + 1].GetComponent<CheckpointBehavior>().setLineDestination(checkpoints[currentCheckpoint].transform.position);
+			if(!_spatialAudio)
+				checkpoints[currentCheckpoint + 1].GetComponent<CheckpointBehavior>().setLineDestination(checkpoints[currentCheckpoint].transform.position);
 		}
 	}
 
@@ -149,12 +160,19 @@ public class Parser : MonoBehaviour {
 
 		checkpoints[currentCheckpoint].GetComponent<CheckpointBehavior>().setCollider(true);
 		checkpoints[currentCheckpoint].GetComponent<CheckpointBehavior>().setIsCurrent(true);
-		GameObject.FindGameObjectWithTag("ArrowPointer").GetComponent<ArrowDirection>().setArrowLookAtPosition(checkpoints[currentCheckpoint].transform.position);
+		
+		if (_spatialAudio) {
+			_spAudio.transform.position = checkpoints[currentCheckpoint].transform.position;
+			_spAudio.Play();
+		}
+		else
+			GameObject.FindGameObjectWithTag("ArrowPointer").GetComponent<ArrowDirection>().setArrowLookAtPosition(checkpoints[currentCheckpoint].transform.position);
 
 		if (checkpoints.Count > (currentCheckpoint + 1)) {
 			checkpoints[currentCheckpoint + 1].SetActive(true);
 			checkpoints[currentCheckpoint + 1].GetComponent<CheckpointBehavior>().setCollider(false);
-			checkpoints[currentCheckpoint + 1].GetComponent<CheckpointBehavior>().setLineDestination(checkpoints[currentCheckpoint].transform.position);
+			if (!_spatialAudio)
+				checkpoints[currentCheckpoint + 1].GetComponent<CheckpointBehavior>().setLineDestination(checkpoints[currentCheckpoint].transform.position);
 		}
 	}
 
