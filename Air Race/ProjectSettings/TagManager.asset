@@ -8,6 +8,9 @@ TagManager:
   - TrackSelectionBox
   - Checkpoint
   - PlayerCollider
+  - Building
+  - ArrowPointer
+  - GroundPlane
   layers:
   - Default
   - TransparentFX

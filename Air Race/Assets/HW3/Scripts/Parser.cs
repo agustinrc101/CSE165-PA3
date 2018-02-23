@@ -11,6 +11,7 @@ public class Parser : MonoBehaviour {
 	private float inchToMeters = 0.0254f;
 	public int totalFiles = 0;
 
+	private GameObject player;
 	private List<GameObject> checkpoints;
 	private int currentCheckpoint = 0;
 
@@ -22,6 +23,7 @@ public class Parser : MonoBehaviour {
 
 	// Use this for initialization
 	void Start () {
+		player = GameObject.FindGameObjectWithTag("Player");
 		checkpoints = new List<GameObject>();
 
 		DirectoryInfo dir = new DirectoryInfo(Application.dataPath + "/HW3/Tracks/");
@@ -105,9 +107,7 @@ public class Parser : MonoBehaviour {
 			begin();
 
 			if (checkpoints.Count > 0) {
-				GameObject.FindGameObjectWithTag("Player").transform.position = checkpoints[0].transform.position;
-				if (checkpoints.Count > 1)
-					GameObject.FindGameObjectWithTag("Player").transform.LookAt(checkpoints[1].transform, Vector3.up);
+				player.transform.position = checkpoints[0].transform.position;
 			}
 
 
@@ -126,10 +126,13 @@ public class Parser : MonoBehaviour {
 		currentCheckpoint = 1;
 		checkpoints[currentCheckpoint].SetActive(true);
 		checkpoints[currentCheckpoint].GetComponent<CheckpointBehavior>().setCollider(true);
+		checkpoints[currentCheckpoint].GetComponent<CheckpointBehavior>().setIsCurrent(true);
+		GameObject.FindGameObjectWithTag("ArrowPointer").GetComponent<ArrowDirection>().setArrowLookAtPosition(checkpoints[currentCheckpoint].transform.position);
 
 		if (checkpoints.Count > 1) {
 			checkpoints[currentCheckpoint + 1].SetActive(true);
 			checkpoints[currentCheckpoint + 1].GetComponent<CheckpointBehavior>().setCollider(false);
+			checkpoints[currentCheckpoint + 1].GetComponent<CheckpointBehavior>().setLineDestination(checkpoints[currentCheckpoint].transform.position);
 		}
 	}
 
@@ -137,22 +140,27 @@ public class Parser : MonoBehaviour {
 		checkpoints[currentCheckpoint].SetActive(false);
 		currentCheckpoint++;
 
+		if (checkpoints.Count <= currentCheckpoint) {
+			finishRace();
+			return;
+		}
+
+		player.GetComponent<AudioController>().playCheckPointReached();
+
 		checkpoints[currentCheckpoint].GetComponent<CheckpointBehavior>().setCollider(true);
+		checkpoints[currentCheckpoint].GetComponent<CheckpointBehavior>().setIsCurrent(true);
+		GameObject.FindGameObjectWithTag("ArrowPointer").GetComponent<ArrowDirection>().setArrowLookAtPosition(checkpoints[currentCheckpoint].transform.position);
 
 		if (checkpoints.Count > (currentCheckpoint + 1)) {
 			checkpoints[currentCheckpoint + 1].SetActive(true);
 			checkpoints[currentCheckpoint + 1].GetComponent<CheckpointBehavior>().setCollider(false);
+			checkpoints[currentCheckpoint + 1].GetComponent<CheckpointBehavior>().setLineDestination(checkpoints[currentCheckpoint].transform.position);
 		}
-
-		if (checkpoints.Count <= currentCheckpoint)
-			finishRace();
-
 	}
 
 	private void finishRace() {
-		//TODO
-		Debug.Log("Finished Race!");
-		//TODO
+		player.GetComponent<Countdown>().setIsRacing(false);
+		player.GetComponent<AudioController>().playFinishedRace();
 	}
 
 	public int getIndex() {
